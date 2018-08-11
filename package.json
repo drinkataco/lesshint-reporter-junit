@@ -17,7 +17,8 @@
     "node": ">=4.0.0"
   },
   "scripts": {
-    "lint": "eslint . --ext .js"
+    "lint": "eslint . --ext .js",
+    "test": "mocha"
   },
   "bugs": {
     "url": "https://github.com/drinkataco/lesshint-reporter-junit/issues"
