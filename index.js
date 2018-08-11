@@ -1,5 +1,5 @@
 module.exports = {
-  name: 'lesshint-lint-junit-reporter',
+  name: 'lesshint-reporter-junit',
   report: (results) => {
     const resultsByfiles = {};
     let output = '';
