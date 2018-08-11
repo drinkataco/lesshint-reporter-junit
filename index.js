@@ -1,9 +1,10 @@
 module.exports = {
   name: 'lesshint-lint-junit-reporter',
-  report: function report(results) {
+  report: (results) => {
     const resultsByfiles = {};
     let output = '';
 
+    // Grab each result and key by file name
     results.forEach((result) => {
       if (typeof resultsByfiles[result.fullPath] === 'undefined') {
         resultsByfiles[result.fullPath] = [];
@@ -12,6 +13,7 @@ module.exports = {
       resultsByfiles[result.fullPath].push(result);
     });
 
+    // Group testcase by file name
     Object.keys(resultsByfiles).forEach((file) => {
       const count = resultsByfiles[file].length;
 
@@ -22,7 +24,7 @@ module.exports = {
 
         output += `<testcase time="0" name="org.lesshint.${result.linter}">`;
         output += `<failure message="${message}">`;
-        output += `<![CDATA[line ${result.line}, col ${result.column}, ${message}. (${result.linter})]]>`;
+        output += `<![CDATA[line ${result.line}, col ${result.column}, ${message} (${result.linter})]]>`;
         output += '</failure>';
         output += '</testcase>';
       });
@@ -31,10 +33,14 @@ module.exports = {
     });
 
     if (output !== '') {
-      console.log('<?xml version="1.0" encoding="utf-8"?>');
-      console.log('<testsuites>');
-      console.log(output);
-      console.log('</testsuites>');
+      let xml = '';
+      xml += '<?xml version="1.0" encoding="utf-8"?>';
+      xml += '<testsuites>';
+      xml += output;
+      xml += '</testsuites>';
+
+      console.log(xml);
+      process.exit(1);
     }
   },
 };
