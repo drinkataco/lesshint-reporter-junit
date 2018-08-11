@@ -1,0 +1,32 @@
+{
+  "name": "lesshint-reporter-junit",
+  "version": "1.0.0",
+  "description": "Lesshint JUNIT compatible reporter",
+  "main": "index.js",
+  "repository": "https://github.com/drinkataco/lesshint-reporter-junit.git",
+  "author": "J J Walwyn <me@joshwalwyn.com>",
+  "license": "MIT",
+  "keywords": [
+    "less",
+    "lint",
+    "hint",
+    "lesshint",
+    "reporter"
+  ],
+  "devDependencies": {
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb": "^17.0.0"
+  },
+  "engines": {
+    "node": ">=4.0.0"
+  },
+  "scripts": {
+    "lint": "eslint . --ext .js"
+  },
+  "bugs": {
+    "url": "https://github.com/drinkataco/lesshint-reporter-junit/issues"
+  },
+  "peerDependencies": {
+    "lesshint": "^5.1.0"
+  }
+}
