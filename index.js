@@ -5,18 +5,11 @@ module.exports = {
     let output = '';
 
     results.forEach((result) => {
-      const error = {
-        line: result.line,
-        col: result.column,
-        message: result.message.replace(/"/g, '&quot;'),
-        key: result.linter,
-      };
-
-      if (typeof resultsByfiles[result.file] === 'undefined') {
-        resultsByfiles[result.file] = [];
+      if (typeof resultsByfiles[result.fullPath] === 'undefined') {
+        resultsByfiles[result.fullPath] = [];
       }
 
-      resultsByfiles[result.file].push(error);
+      resultsByfiles[result.fullPath].push(result);
     });
 
     Object.keys(resultsByfiles).forEach((file) => {
@@ -25,9 +18,11 @@ module.exports = {
       output += `<testsuite package="org.lesshint" time="0" tests="${count}" errors="${count}" name="${file}">`;
 
       resultsByfiles[file].forEach((result) => {
-        output += `<testcase time="0" name="org.lesshint.${result.key}">`;
-        output += `<failure message="${result.message}">`;
-        output += `<![CDATA[line ${result.line}, col ${result.col}, ${result.message} (${result.key})]]>`;
+        const message = result.message.replace(/"/g, '&quot;');
+
+        output += `<testcase time="0" name="org.lesshint.${result.linter}">`;
+        output += `<failure message="${message}">`;
+        output += `<![CDATA[line ${result.line}, col ${result.column}, ${message}. (${result.linter})]]>`;
         output += '</failure>';
         output += '</testcase>';
       });
