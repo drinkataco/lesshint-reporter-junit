@@ -1,6 +1,7 @@
 /* eslint-env mocha */
 const assert = require('assert');
 const xml2js = require('xml2js');
+const fs = require('fs');
 const { stdout } = require('test-console');
 
 const junitReporter = require('../index');
@@ -76,9 +77,9 @@ describe('JUNIT Reporter', () => {
       assert.ok(anotherFile.$.errors === '1');
       assert.ok(anotherFile.testcase.length === parseInt(anotherFile.$.errors, 10));
 
-      assert.ok(testFile.testcase[0].failure[0]._ === 'line 4, col 5, The universal selector shouldn\'t be used. (universalSelector)');
-      assert.ok(testFile.testcase[1].failure[0]._ === 'line 5, col 17, Unit should not be omitted on zero values. (zeroUnit)');
-      assert.ok(anotherFile.testcase[0].failure[0]._ === 'line 6, col 9, Property ordering is not alphabetized (propertyOrdering)');
+      assert.ok(testFile.testcase[0].failure[0]._.trim() === 'line 4, col 5, The universal selector shouldn\'t be used. (universalSelector)');
+      assert.ok(testFile.testcase[1].failure[0]._.trim() === 'line 5, col 17, Unit should not be omitted on zero values. (zeroUnit)');
+      assert.ok(anotherFile.testcase[0].failure[0]._.trim() === 'line 6, col 9, Property ordering is not alphabetized (propertyOrdering)');
 
       assert.ok(exitCode === 1);
       exitCode = null;
@@ -98,6 +99,25 @@ describe('JUNIT Reporter', () => {
     assert.ok(response.length === 0);
 
     assert.ok(exitCode === null);
+    done();
+  });
+
+  it('It should be able to write to file', (done) => {
+    const filename = 'junit.xml';
+    const inspect = stdout.inspect();
+
+    junitReporter.report(exampleResults);
+
+    const writeOut = junitReporter.writeOut(filename);
+    writeOut();
+
+    inspect.restore();
+    // Wait 100 ms before checking if file exists, as writeOut is asynchronous
+    setTimeout(() => {
+      assert.ok(fs.existsSync(filename));
+      // Then delete the file
+      fs.unlinkSync(filename);
+    }, 100);
     done();
   });
 });
