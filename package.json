@@ -34,5 +34,8 @@
     "mocha": "^5.2.0",
     "test-console": "^1.1.0",
     "xml2js": "^0.4.19"
+  },
+  "dependencies": {
+    "mkdirp": "^0.5.1"
   }
 }
