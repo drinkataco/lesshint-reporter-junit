@@ -107,14 +107,20 @@ describe('JUNIT Reporter', () => {
     const inspect = stdout.inspect();
 
     junitReporter.report(exampleResults);
+    const output = junitReporter.out[0];
 
     const writeOut = junitReporter.writeOut(filename);
     writeOut();
 
     inspect.restore();
+
     // Wait 100 ms before checking if file exists, as writeOut is asynchronous
     setTimeout(() => {
       assert.ok(fs.existsSync(filename));
+      // Assert that the file contets match the output
+      assert.ok(fs.readFileSync(filename, { encoding: 'utf-8' }) === output);
+      // writeOut should have reset the junitReporter.out array
+      assert.ok(junitReporter.out[0] === undefined);
       // Then delete the file
       fs.unlinkSync(filename);
     }, 100);
