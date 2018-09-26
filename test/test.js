@@ -46,8 +46,6 @@ const exampleResults = [
   },
 ];
 
-// Capture exit process method
-
 describe('JUNIT Reporter', () => {
   it('It should parse errors and throw exit code', (done) => {
     sinon.stub(process, 'exit');
@@ -57,7 +55,7 @@ describe('JUNIT Reporter', () => {
 
     inspect.restore();
 
-    // Start by checking the exist code so we can restore process.exit
+    // Start by checking the exit code so we can restore process.exit
     assert.ok(process.exit.calledWith(1));
     process.exit.restore();
     const response = inspect.output;
@@ -95,7 +93,7 @@ describe('JUNIT Reporter', () => {
     junitReporter.report([]);
 
     inspect.restore();
-    // Start by checking the exist code so we can restore process.exit
+    // Start by checking the exit code so we can restore process.exit
     assert.ok(!process.exit.called);
     process.exit.restore();
 
