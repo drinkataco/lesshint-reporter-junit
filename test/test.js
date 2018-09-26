@@ -1,5 +1,6 @@
 /* eslint-env mocha */
 const assert = require('assert');
+const sinon = require('sinon');
 const xml2js = require('xml2js');
 const fs = require('fs');
 const { stdout } = require('test-console');
@@ -46,17 +47,19 @@ const exampleResults = [
 ];
 
 // Capture exit process method
-let exitCode;
-process.exit = (c) => { exitCode = c; };
 
 describe('JUNIT Reporter', () => {
   it('It should parse errors and throw exit code', (done) => {
+    sinon.stub(process, 'exit');
     const inspect = stdout.inspect();
 
     junitReporter.report(exampleResults);
 
     inspect.restore();
 
+    // Start by checking the exist code so we can restore process.exit
+    assert.ok(process.exit.calledWith(1));
+    process.exit.restore();
     const response = inspect.output;
 
     assert.ok(response.length > 0);
@@ -81,28 +84,30 @@ describe('JUNIT Reporter', () => {
       assert.ok(testFile.testcase[1].failure[0]._.trim() === 'line 5, col 17, Unit should not be omitted on zero values. (zeroUnit)');
       assert.ok(anotherFile.testcase[0].failure[0]._.trim() === 'line 6, col 9, Property ordering is not alphabetized (propertyOrdering)');
 
-      assert.ok(exitCode === 1);
-      exitCode = null;
       done();
     });
   });
 
   it('It should not throw an exit code when no errors', (done) => {
+    sinon.stub(process, 'exit');
     const inspect = stdout.inspect();
 
     junitReporter.report([]);
 
     inspect.restore();
+    // Start by checking the exist code so we can restore process.exit
+    assert.ok(!process.exit.called);
+    process.exit.restore();
 
     const response = inspect.output;
 
     assert.ok(response.length === 0);
 
-    assert.ok(exitCode === null);
     done();
   });
 
   it('It should be able to write to file', (done) => {
+    sinon.stub(process, 'exit');
     const filename = 'junit.xml';
     const inspect = stdout.inspect();
 
@@ -113,6 +118,7 @@ describe('JUNIT Reporter', () => {
     writeOut();
 
     inspect.restore();
+    process.exit.restore();
 
     // Wait 100 ms before checking if file exists, as writeOut is asynchronous
     setTimeout(() => {
