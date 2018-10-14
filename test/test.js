@@ -113,13 +113,13 @@ describe('JUNIT Reporter', () => {
     const output = junitReporter.out[0];
 
     const writeOut = junitReporter.writeOut(filename);
-    writeOut();
+    const writePromise = new Promise(() => {
+      writeOut();
 
-    inspect.restore();
-    process.exit.restore();
-
-    // Wait 100 ms before checking if file exists, as writeOut is asynchronous
-    setTimeout(() => {
+      inspect.restore();
+      process.exit.restore();
+    });
+    writePromise.then(() => {
       assert.ok(fs.existsSync(filename));
       // Assert that the file contets match the output
       assert.ok(fs.readFileSync(filename, { encoding: 'utf-8' }) === output);
@@ -127,7 +127,7 @@ describe('JUNIT Reporter', () => {
       assert.ok(junitReporter.out[0] === undefined);
       // Then delete the file
       fs.unlinkSync(filename);
-    }, 100);
+    });
     done();
   });
 });
